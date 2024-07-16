@@ -32,7 +32,7 @@ const Participants = () => {
     console.log("Station");
     const auth = JSON.parse(localStorage.getItem("auth"));
     console.log(JSON.parse(localStorage.getItem("auth")));
-    const response = await fetch("http://localhost:8000/api/add-entry", {
+    const response = await fetch(import.meta.env.VITE_API_URL + "/add-entry", {
       method: "POST",
       body: JSON.stringify({ or_no: result.data, station: auth.user.station }),
       headers: {

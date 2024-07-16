@@ -18,13 +18,16 @@ const Login = () => {
     console.log("QR Code Scanned. Authenticating");
     scanner?.current?.stop();
 
-    const response = await fetch("http://localhost:8000/api/authenticate", {
-      method: "POST",
-      body: JSON.stringify({ or_no: result.data }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      import.meta.env.VITE_API_URL + "/authenticate",
+      {
+        method: "POST",
+        body: JSON.stringify({ or_no: result.data }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const json = await response.json();
 
