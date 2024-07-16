@@ -33,7 +33,7 @@ const Success = () => {
           <img src={Check} alt="" />
         </div>
       </div>
-      <p className="description">Validated</p>
+      <p className="description">{location.state.name}</p>
 
       <div className="buttons">
         <div

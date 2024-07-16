@@ -60,7 +60,7 @@ async def create_entry(request: EntryRequest):
     if len(existing_entry) > 1:
         return JSONResponse(
             status_code=status.HTTP_200_OK,
-            content={"message": "Participant already has an entry on this station", "data": existing_entry},
+            content={"message": "Participant already has an entry on this station", "data": {'name' : existing_entry[0][1]}},
         )
 
     result_one = result[0]
@@ -77,5 +77,5 @@ async def create_entry(request: EntryRequest):
         
     return JSONResponse(
         status_code=status.HTTP_200_OK,
-        content={"message": "Dataset uploaded successfully", "data": result_entry},
+        content={"message": "Dataset uploaded successfully", "data": {'rowId': result_entry, 'name' : result_one[1]}},
     )

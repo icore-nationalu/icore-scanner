@@ -46,7 +46,7 @@ const Participants = () => {
       console.log("Success LOGIN");
       console.log(json);
 
-      navigate("/success", { replace: false, state: { or: result.data } });
+      navigate("/success", { replace: false, state: { name: json.data.name } });
       // localStorage.setItem("auth", JSON.stringify({ user: json.data }));
 
       // navigate("/home", { replace: true });
