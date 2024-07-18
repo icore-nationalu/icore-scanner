@@ -3,7 +3,13 @@ from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from database import fetch_committee, fetch_entry, fetch_participant, fetch_possible_entry, insert_one_entry
+from database import (
+    fetch_committee,
+    fetch_entry,
+    fetch_participant,
+    fetch_possible_entry,
+    insert_one_entry,
+)
 
 
 class ORRequest(BaseModel):
@@ -46,6 +52,13 @@ class EntryRequest(BaseModel):
 async def create_entry(request: EntryRequest):
     or_no = request.or_no
     station = request.station
+
+    if not or_no:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"type": "error", "message": "Registration Not Found"},
+        )
+        
     result = fetch_participant(or_no)
 
     if len(result) == 0:
@@ -58,12 +71,12 @@ async def create_entry(request: EntryRequest):
     existing_entry = await fetch_entry(or_no=or_no, station=station)
 
     station_detail = fetch_possible_entry(station_name=station)
-    
+
     if not station_detail:
         no_of_possible_entry = 1
-    else: 
+    else:
         no_of_possible_entry = station_detail[0][1]
-        
+
     print("Len existing entry")
     print(len(existing_entry))
 
