@@ -79,3 +79,13 @@ async def create_entry(request: EntryRequest):
         status_code=status.HTTP_200_OK,
         content={"message": "Dataset uploaded successfully", "data": {'rowId': result_entry, 'name' : result_one[1]}},
     )
+    
+from datetime import date
+async def test_date ():
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"message": "DATE NOW", "date": (str(date.today()))},
+    )
+    
+    # print("DATE")
+    # print((str(date.today())))

@@ -15,6 +15,7 @@
 import mysql.connector
 from dotenv import load_dotenv
 import os
+from datetime import date
 
 load_dotenv()
 
@@ -52,6 +53,7 @@ def initialize_db():
         or_no VARCHAR(255),
         name VARCHAR(255),
         station VARCHAR(255),
+        conference_date DATE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
     )
     """
