@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import QRFrameAlt from "../assets/qr-frame-alt.svg";
 import Check from "../assets/check.svg";
+import Header from "../components/Header";
 
 const Success = () => {
   const location = useLocation();
@@ -21,39 +22,45 @@ const Success = () => {
     console.log(location);
   }, []);
   return (
-    <div className="container success-container">
-      <div className="station-name">
-        <p>{station}</p>
-      </div>
-      <div className="check-box-wrapper">
-        <div className="frame">
-          <img src={QRFrameAlt} alt="" />
+    <main className="success">
+      <Header
+        onClick={() => {
+          navigate("/participants");
+        }}
+        color="alt"
+      />
+      <div className="container success-container">
+        <h1 className="highlight-header">{station}</h1>
+        <div className="cross-box-wrapper">
+          <div className="frame">
+            <img src={QRFrameAlt} alt="" />
+          </div>
+          <div className="cross">
+            <img src={Check} alt="" />
+          </div>
         </div>
-        <div className="check">
-          <img src={Check} alt="" />
-        </div>
-      </div>
-      <p className="description">{location.state.name}</p>
+        <p className="description negative">{location.state.name}</p>
 
-      <div className="buttons">
-        <div
-          className="primary"
-          onClick={() => {
-            navigate("/participants");
-          }}
-        >
-          Scan another QR Code
-        </div>
-        <div
-          className="secondary"
-          onClick={() => {
-            navigate("/home");
-          }}
-        >
-          Back to Home
+        <div className="buttons">
+          <div
+            className="primary"
+            onClick={() => {
+              navigate("/participants");
+            }}
+          >
+            Scan another QR Code
+          </div>
+          <div
+            className="secondary"
+            onClick={() => {
+              navigate("/home");
+            }}
+          >
+            Back to Home
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 export default Success;
