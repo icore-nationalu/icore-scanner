@@ -53,7 +53,7 @@ def initialize_db():
         or_no VARCHAR(255),
         name VARCHAR(255),
         station VARCHAR(255),
-        conference_date DATE,
+        conference_date DATETIME,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
     )
     """
@@ -126,11 +126,20 @@ def fetch_entry(or_no, station):
     
     return result
 
+
+from datetime import date, datetime, timezone, timedelta
+
+
 def insert_one_entry(or_no, name, station):
+    
+    ph_time = timezone(timedelta(hours=8))
+
+    current_time_ph = datetime.now(ph_time).strftime("%Y-%m-%d %H:%M:%S")
+    
     conn = connect()
     cursor = conn.cursor()
-    query = "INSERT INTO entries (or_no, name, station) VALUES (%s, %s, %s)"
-    values = (or_no, name, station)
+    query = "INSERT INTO entries (or_no, name, station, conference_date) VALUES (%s, %s, %s, %s)"
+    values = (or_no, name, station, str(current_time_ph))
 
     cursor.execute(query, values)
 

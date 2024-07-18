@@ -93,7 +93,7 @@ async def test_date():
 
     ph_time = timezone(timedelta(hours=8))
 
-    current_time_ph = datetime.now(ph_time).strftime("%d/%m/%Y %H:%M:%S")
+    current_time_ph = datetime.now(ph_time).strftime("%Y-%m-%d %H:%M:%S")
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
