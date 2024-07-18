@@ -3,7 +3,7 @@ from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from database import fetch_committee, fetch_entry, fetch_participant, insert_one_entry
+from database import fetch_committee, fetch_entry, fetch_participant, fetch_possible_entry, insert_one_entry
 
 
 class ORRequest(BaseModel):
@@ -51,19 +51,27 @@ async def create_entry(request: EntryRequest):
     if len(result) == 0:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Registration not found.",
+            detail={"type": "error", "message": "Registration Not Found"},
         )
 
     # Avoid multiple entries in the same station
-    existing_entry = fetch_entry(or_no=or_no, station=station)
+    existing_entry = await fetch_entry(or_no=or_no, station=station)
 
-    if len(existing_entry) > 1:
-        return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={
-                "message": "Participant already has an entry on this station",
-                "data": {"name": existing_entry[0][1]},
-            },
+    station_detail = fetch_possible_entry(station_name=station)
+    
+    if not station_detail:
+        no_of_possible_entry = 1
+    else: 
+        no_of_possible_entry = station_detail[0][1]
+        
+    print("Len existing entry")
+    print(len(existing_entry))
+
+    if len(existing_entry) >= no_of_possible_entry:
+        print("TRUEEEEEEE")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"type": "info", "message": "User Already Validated"},
         )
 
     result_one = result[0]
@@ -73,13 +81,13 @@ async def create_entry(request: EntryRequest):
     if not result_entry:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Failed to create entry",
+            detail={"type": "error", "message": "Failed to Validate User"},
         )
 
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content={
-            "message": "Dataset uploaded successfully",
+            "message": "Entry created successfully",
             "data": {"rowId": result_entry, "name": result_one[1]},
         },
     )

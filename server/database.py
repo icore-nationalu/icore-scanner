@@ -15,7 +15,7 @@
 import mysql.connector
 from dotenv import load_dotenv
 import os
-from datetime import date
+from datetime import datetime, timezone, timedelta
 
 load_dotenv()
 
@@ -46,19 +46,29 @@ def initialize_db():
     )
     """
     cursor.execute(query)
-    
+
     query = """
     CREATE TABLE IF NOT EXISTS entries (
         id INT AUTO_INCREMENT PRIMARY KEY,
         or_no VARCHAR(255),
         name VARCHAR(255),
         station VARCHAR(255),
-        conference_date DATETIME,
+        conference_date DATE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
     )
     """
     cursor.execute(query)
-    
+
+    query = """
+    CREATE TABLE IF NOT EXISTS stations (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        station_name VARCHAR(255),
+        no_of_entry INT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+    )
+    """
+    cursor.execute(query)
+
     conn.close()
 
 
@@ -78,64 +88,64 @@ def create_user(or_no, name, role, station):
 def fetch_committee(or_no):
     conn = connect()
     cursor = conn.cursor()
-    
+
     query = f"""
     SELECT or_no, name, role, station FROM users 
     WHERE or_no = '{or_no}' AND role = 'committee'
     """
-    
-    print(query)
 
-    
     cursor.execute(query)
     result = cursor.fetchall()
-    
+
     conn.close()
-    
+
     return result
+
 
 def fetch_participant(or_no):
     conn = connect()
     cursor = conn.cursor()
-    
+
     query = f"""
     SELECT or_no, name, role, station FROM users 
     WHERE or_no = '{or_no}' AND role = 'participant'
     """
-    
+
     cursor.execute(query)
     result = cursor.fetchall()
-    
+
     conn.close()
-    
+
     return result
 
-def fetch_entry(or_no, station):
+
+async def fetch_entry(or_no, station):
+    ph_time = timezone(timedelta(hours=8))
+
+    current_date_ph = datetime.now(ph_time).strftime("%Y-%m-%d")
+    
     conn = connect()
     cursor = conn.cursor()
-    
+
     query = f"""
     SELECT or_no, name, station FROM entries 
-    WHERE or_no = '{or_no}' AND station = '{station}'
+    WHERE or_no = '{or_no}' AND station = '{station}' AND conference_date = '{str(current_date_ph)}'
     """
-    
+
     cursor.execute(query)
     result = cursor.fetchall()
-    
+
     conn.close()
-    
+
     return result
-
-
-from datetime import date, datetime, timezone, timedelta
 
 
 def insert_one_entry(or_no, name, station):
-    
+
     ph_time = timezone(timedelta(hours=8))
 
-    current_time_ph = datetime.now(ph_time).strftime("%Y-%m-%d %H:%M:%S")
-    
+    current_time_ph = datetime.now(ph_time).strftime("%Y-%m-%d")
+
     conn = connect()
     cursor = conn.cursor()
     query = "INSERT INTO entries (or_no, name, station, conference_date) VALUES (%s, %s, %s, %s)"
@@ -146,3 +156,19 @@ def insert_one_entry(or_no, name, station):
     conn.commit()
     conn.close()
     return cursor.lastrowid
+
+
+def fetch_possible_entry(station_name):
+    conn = connect()
+    cursor = conn.cursor()
+
+    query = f"""
+    SELECT station_name, no_of_entry FROM stations WHERE station_name = '{station_name}'
+    """
+
+    cursor.execute(query)
+    result = cursor.fetchall()
+
+    conn.close()
+
+    return result

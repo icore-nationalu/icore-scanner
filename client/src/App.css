@@ -14,7 +14,7 @@
 
 .qr-reader {
   width: 70vw;
-  aspect-ratio: 1;
+  height: 70vw;
   max-width: 400px;
   max-height: 400px;
   margin: 40px auto;
@@ -64,7 +64,7 @@
     /* width: 100%;
     height: 76vw; */
     width: 70vw;
-    aspect-ratio: 1;
+    height: 70vw;
   }
 
   /* .qr-reader .qr-frame {
@@ -300,11 +300,18 @@
   flex-direction: column;
   justify-content: start;
   align-items: center;
-  background: var(--color-container-border-success-dark, #561010);
   width: 100vw;
   min-height: 100vh;
   padding-top: 80px;
   color: #D7F4D8 !important;
+}
+
+.failed-container.error-container {
+  background: var(--color-container-border-success-dark, #561010);
+}
+
+.failed-container.info-container {
+  background: var(--color-container-border-information-dark, #103856);
 }
 
 .failed-container .cross-box-wrapper {

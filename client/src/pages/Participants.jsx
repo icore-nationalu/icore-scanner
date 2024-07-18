@@ -14,6 +14,10 @@ const Participants = () => {
 
   const [qrContent, setQrContent] = useState("");
 
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [infoMessage, setInfoMessage] = useState("");
+
   useEffect(() => {
     const auth = JSON.parse(localStorage.getItem("auth"));
     if (!auth) {
@@ -51,7 +55,15 @@ const Participants = () => {
 
       // navigate("/home", { replace: true });
     } else {
-      setIsScanFailed(true);
+      const { detail } = json;
+
+      if (detail["type"] == "error") {
+        console.log(detail["type"]);
+        setErrorMessage(detail["message"]);
+      } else if (detail["type"] == "info") {
+        setInfoMessage(detail["message"]);
+      }
+      setIsScanStatus(detail["type"]);
       // alert("Authentication Failed");
       // window.location.reload(false);
     }
@@ -61,9 +73,9 @@ const Participants = () => {
     console.log(err);
   };
 
-  const [isScanFailed, setIsScanFailed] = useState(false);
-  return isScanFailed ? (
-    <div className="failed-container container">
+  const [isScanStatus, setIsScanStatus] = useState("");
+  return isScanStatus == "error" ? (
+    <div className="failed-container error-container container">
       <h1>PARTICPANT</h1>
 
       <div className="cross-box-wrapper">
@@ -76,6 +88,40 @@ const Participants = () => {
       </div>
 
       <p className="description">Registration Not Found</p>
+
+      <div className="buttons">
+        <div
+          className="primary"
+          onClick={() => {
+            window.location.reload(false);
+          }}
+        >
+          Scan another QR Code
+        </div>
+        <div
+          className="secondary"
+          onClick={() => {
+            navigate("/home");
+          }}
+        >
+          Back to Home
+        </div>
+      </div>
+    </div>
+  ) : isScanStatus == "info" ? (
+    <div className="failed-container info-container container">
+      <h1>PARTICPANT</h1>
+
+      <div className="cross-box-wrapper">
+        <div className="frame">
+          <img src={QRFrameAlt} alt="" />
+        </div>
+        <div className="cross">
+          <img src={Cross} alt="" />
+        </div>
+      </div>
+
+      <p className="description">User Already Validated</p>
 
       <div className="buttons">
         <div
